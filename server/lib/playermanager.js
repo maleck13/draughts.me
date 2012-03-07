@@ -13,11 +13,9 @@ exports.playermanager = function (opts) {
             console.log("adding player "+data.playername);
             try{
                 var player = new Player(data);
-                console.log("made new player");
-                player.on(player.events.PLAYER_LEFT,self.removePlayer);
-                console.log("adding player to active players");    
+                player.on(player.events.PLAYER_LEFT,self.removePlayer);    
                 players[player.playerName] = player;
-                console.log("calling cb");
+                
                 if('function' === typeof cb) return cb(null,player);
             }catch(e){
                 if(e.name === "PlayerException"){
@@ -27,6 +25,9 @@ exports.playermanager = function (opts) {
         },
         removePlayer : function (player) {
             console.log("removing player");
+        },
+        "addPlayerToGame": function () {
+            
         }
     };
     return self;
