@@ -9,7 +9,6 @@ var express = require('express')
 var app = module.exports = express.createServer();
 
 // Configuration
-
 app.configure(function(){
   app.set('views', '../client/views');
   app.set('view engine', 'jade');
