@@ -7,7 +7,7 @@
         Board.player = null;
     }
 
-    Board.setup()
+    Board.setup = function()
     {
         
     }
@@ -15,6 +15,21 @@
     Board.render = function()
     {
 
+    }
+
+    Board.enable = function()
+    {
+
+    }
+
+    Board.disable = function()
+    {
+        
+    }
+
+    Board.getId = function()
+    {
+        
     }
 
     Board.renderPieces = function()
