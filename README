@@ -1,0 +1,4 @@
+To develop git clone
+then run npm install .
+
+to check all is ok run command 'mocha' in your terminal from the ./server folder
