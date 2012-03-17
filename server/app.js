@@ -8,6 +8,9 @@ var express = require('express')
   , socketserver = require('./lib/socketserver.js')
   , fs = require('fs');
 
+
+process.PATH =  process.PATH + ":./models";
+
 var app = module.exports = express.createServer();
 
 // Configuration
