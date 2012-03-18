@@ -1,8 +1,16 @@
 var square = require('./square');
 
-var piece = {
-   type : 'man',
-   side : 'red',
-   location : '' 
-    
+function Piece (opts) {
+    this.type = "man";
+    this.side = opts.side;
 };
+
+Piece.prototype.Take = function () {
+    console.log("will take");
+};
+
+Piece.prototype.toString = function () {
+  return this.type + " "+ this.side;  
+};
+
+exports.Piece = Piece;

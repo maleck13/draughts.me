@@ -7,7 +7,7 @@
  */
 
 var square = require('../models/square.js');
-var piece = require('../models/piece.js');
+var pieces = require('../models/piece.js');
 module.exports = function (opts) {
     var games = [];
     
@@ -23,6 +23,10 @@ module.exports = function (opts) {
                 var asquare = square();
                  asquare.position.x = x;
                  asquare.position.y = y;
+                 if(asquare.position.x === 1 || asquare.position.x ===2 || asquare.position.x === 7 || asquare.position.x === 8 ){
+                     var colour     = (asquare.position.x === 1 || asquare.position.x === 2) ? "red" : "black";
+                     asquare.piece  = new pieces.Piece({side:colour}); 
+                 }
                  squares.push(asquare);
              }  
            } 
