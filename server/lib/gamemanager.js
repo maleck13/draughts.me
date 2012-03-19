@@ -1,22 +1,32 @@
 /**
- * Created by JetBrains WebStorm.
- * User: craigbrookes
- * Date: 07/03/2012
- * Time: 21:46
- * To change this template use File | Settings | File Templates.
+ *
+ * Note boardid is sent from client
+ * board state verified here
+ * move sent from client with boardid
+ * board verified. move processed. board state hash updated
  */
 
 var square = require('../models/square.js');
 var pieces = require('../models/piece.js');
-module.exports = function (opts) {
-    var games = [];
+var crypto = require('crypto');
+var EXCEPTIONS = require('./exceptions.js');
+var boards = {overallGameCount : 0,activeGameCount:0};
+
+module.exports = function (opts) {    
     
     var self = {
-        "startGame" : function (opts) {
-            console.log("starting game");
+        "startGame" : function () {
+            //poss move some of this to redis in future
+            var board = self.createBoard();
+            console.log("starting game on board " + board.id);
+            boards[createGameId()] = board;
+            
+            //once game started ok up active game count
+            boards.activeGameCount++;
+            boards.overallGameCount++;
         },
         "createBoard" : function () {
-           var squares = [];
+           var board = {squares:[]};
          
            for(var x =1; x < 9; x++){
              for(var y=1; y<9; y++){
@@ -27,11 +37,42 @@ module.exports = function (opts) {
                      var colour     = (asquare.position.x === 1 || asquare.position.x === 2) ? "red" : "black";
                      asquare.piece  = new pieces.Piece({side:colour}); 
                  }
-                 squares.push(asquare);
+                 board['squares'][board['squares'].length] = asquare ;
              }  
-           } 
-           return squares; 
+           }
+           board.id = createGameCheck(board); 
+           return board; 
+        },
+        "processMove" : function (gameid,move){
+            if(move.hasOwnProperty('startpos') && move.hasOwnProperty('endpos') && move.hasOwnProperty('piece')){
+                
+            }else throw new Error(EXCEPTIONS.GAME_EXCEPTIONS.MOVE_EXCEPTION());
         }
     };
     return self;
+};
+
+
+function createGameCheck(board){
+   return  crypto.createHash('md5').update(board.toString()).digest("hex");
 }
+
+function createGameId(){
+   var rand = new Date().getTime() + Math.random(); 
+   return crypto.createHash('md5').update(rand.toString()).digest('hex');
+}
+
+function verifyGameId(gameid, players) {
+    
+}
+
+function verifyBoard(gameid,board){
+    if(boards.hasOwnProperty(gameid)){
+        //boards prev state should match current state
+        var chkBoard = boards.gameid; 
+        return (createGameCheck(board) === createGameCheck(chkBoard));
+    }
+    return false;
+}
+    
+    
