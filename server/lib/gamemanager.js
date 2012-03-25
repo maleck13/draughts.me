@@ -11,30 +11,31 @@ var pieces = require('../models/piece.js');
 var crypto = require('crypto');
 var EXCEPTIONS = require('./exceptions.js');
 var boards = {overallGameCount : 0,activeGameCount:0};
+var gameUtil = require('./gameUtils');
 
 module.exports = function (opts) {    
     
     var self = {
         "startGame" : function () {
             //poss move some of this to redis in future
-            var board = self.createBoard();
-            console.log("starting game on board " + board.id);
-            boards[createGameId()] = board;
+            var board  = self.createBoard();
+            var gameid = gameUtil.createUID();
+            console.log("starting game on board " + board.id + " with gameid "+gameid);
+            boards[gameid] = board;
             
             //once game started ok up active game count
             boards.activeGameCount++;
             boards.overallGameCount++;
+            return board;
         },
         "createBoard" : function () {
            var board = {squares:[]};
          
-           for(var x =1; x < 9; x++){
-             for(var y=1; y<9; y++){
-                var asquare = square();
-                 asquare.position.x = x;
-                 asquare.position.y = y;
-                 if(asquare.position.x === 1 || asquare.position.x ===2 || asquare.position.x === 7 || asquare.position.x === 8 ){
-                     var colour     = (asquare.position.x === 1 || asquare.position.x === 2) ? "red" : "black";
+           for(var x =0; x < 8; x++){
+             for(var y=0; y<8; y++){
+                var asquare = square({x:x,y:y});
+                 if(asquare.position.x === 0 || asquare.position.x ===1 || asquare.position.x === 6 || asquare.position.x === 7 ){
+                     var colour     = (asquare.position.x === 0 || asquare.position.x === 1) ? "red" : "black";
                      asquare.piece  = new pieces.Piece({side:colour}); 
                  }
                  board['squares'][board['squares'].length] = asquare ;
@@ -57,10 +58,6 @@ function createGameCheck(board){
    return  crypto.createHash('md5').update(board.toString()).digest("hex");
 }
 
-function createGameId(){
-   var rand = new Date().getTime() + Math.random(); 
-   return crypto.createHash('md5').update(rand.toString()).digest('hex');
-}
 
 function verifyGameId(gameid, players) {
     

@@ -2,7 +2,7 @@ var gameMan = require('../server/lib/gamemanager.js');
 var assert = require('assert');
 var board = gameMan().createBoard();
 
-console.log(board);
+
 
 describe('borad create', function () {
    it('should create a board with 64 sqaures and 16 pieces', function (){
