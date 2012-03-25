@@ -9,20 +9,34 @@ var socketio = require('socket.io');
 var io;
 var Player = require('../models/player.js');
 var manager = require('./playermanager.js');
+var gameMan = require('./gamemanager.js');
 
 exports.startSocketServer = function(app){
     io = socketio.listen(app);
     
     io.sockets.on('connection', function (socket) {
-    socket.emit('ready');
+     socket.emit('ready');
      socket.on('addplayer', function (data){  
-        console.log("adding player on process " + process.env.NODE_WORKER_ID);
         data.socket = socket; 
         manager.playermanager().addPlayer(data, function (err,player){
             console.log("in callback");
            player.notify({name:'added',data:{ hello: 'world' }});     
        });
-     });    
+     });
+      
+     socket.on('joingame', function (data){
+       
+     });
+      
+     socket.on('startgame',function (data){
+        if(data.players && data.players.length ===2){
+            gameMan().startGame(data);
+        }   
+     });   
         
     });
 };
+
+function errorHandler(socket, error){
+    socket.emit("error",error);
+}

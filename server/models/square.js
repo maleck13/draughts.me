@@ -5,32 +5,30 @@ var square = function (opts) {
           else return false;
       },
       position : {x:opts.x,y:opts.y},
+      id : function (){return self.position.x + "-" + self.position.y},   
       piece : undefined,
       edge : function (){
          var pos = self.position; 
-         return{ isEdge:  (pos.y===0 || pos.y===7 || pos.x===0 || pos.x ===7), 
-             edges:(function () {
+         var isEdge = (pos.y===0 || pos.y===7 || pos.x===0 || pos.x ===7);
+         return{ isEdge:  isEdge, 
+             isCorner:(function () {
                 var edges = {};
                 //find corners 
                 if(pos.y === 0 && pos.x ===7 || pos.y ===7 && pos.x ===0 || 
                     pos.y===7 && pos.x === 7 || pos.x ===0 && pos.y ===0 ){
-                    edges.sides = 2;
-                    edges.isCorner = true;
-                }else if(this.isEdge){
-                    edges.isCorner = false;
-                    edges.sides =1;
-                } 
-                return edges;
+                    return true;
+                }
+                return false;
+                
             }())
          }; 
-      },
-      legalMoves : [],
+      }, 
       neighbours : function () {
           //all edges except corners have 5 adjacent squares
           // all corners have 3 adjacent squares
           // others have 7
           
-          var edgeinfo = self.edge().edges;
+          var edgeinfo = self.edge();
           var x = self.position.x;
           var y = self.position.y;
           if(edgeinfo.isCorner){
@@ -40,7 +38,6 @@ var square = function (opts) {
               else if(self.position.x === 7 && self.position.y === 0)return [{x:7,y:1},{x:7,y:7},{y:1,x:7}];
               else if(self.position.x === 0 && self.position.y === 7)return [{y:7,x:1},{y:7,x:7},{x:1,y:7}];
           }else if(self.edge().isEdge && ! edgeinfo.isCorner){
-              console.log("is edge but not corner");
               // alway be plus one minus one on the edge axis
               // and plus one plus one minus one plus one plus one on non edge axis
               if(self.position.x === 7) return [{x:x,y:y -1},{x:x,y:y+1},{x:x-1,y:y},{x:x-1,y:y-1},{x:x-1,y:y+1}];
@@ -59,17 +56,20 @@ var square = function (opts) {
                       {x:x+1,y:y-1}];
           }
            
-      }  
-    };
-    
-    
-    self.asJson = {};
-    for(prop in self){
-        if(self.hasOwnProperty(prop)){
-            if('function' === typeof self[prop]) self.asJson[prop] = self[prop]();
-            else if(prop !== 'asJson') self.asJson[prop] = self[prop];
+      },
+      asJson : function () {
+        var asJson = {};
+        for(var prop in self){
+          if(self.hasOwnProperty(prop)){
+            if('function' === typeof self[prop] && prop !== 'asJson') asJson[prop] = self[prop]();
+            else if(prop === 'piece')asJson[prop] = (self.piece === undefined)?undefined: self.piece.asJson();
+            else if(prop !== 'asJson') asJson[prop] = self[prop];
+          }
         }
-    }
+        return asJson;
+      } 
+    };
+
     return self;
     
 };

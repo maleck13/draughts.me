@@ -18,5 +18,9 @@ exports.GAME_EXCEPTIONS = {
   MOVE_EXCEPTION : function(extra){
       var extra = extra || "";
       return {name : "move exception" , message : util.format("A game exception occurred and the move could not be executed. %s ",extra.toString()),code:503};
-  }  
+  },
+  CREATE_GAME_EXCEPTION : function (extra){
+    var extra = extra || "";
+    return {name:"CreateGameException",message: util.format("A game could not be created %s",extra.toString()),code:503};
+  }
 };

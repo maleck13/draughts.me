@@ -14,4 +14,11 @@ Piece.prototype.toString = function () {
   return this.type + " "+ this.side;  
 };
 
+Piece.prototype.asJson = function () {
+  return {
+    type:this.type,
+    side:this.side,
+    id : this.id
+  };
+};
 exports.Piece = Piece;
