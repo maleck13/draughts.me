@@ -4,27 +4,25 @@ var players = require('./testfixtures/players.js');
 var plyers = players.getPlayers();
 var game;
 
-describe("start game ok ", function (){
-   it("should start a game with two players ", function () {
-         gameMan().startGame({players:plyers}, function (err, game){
-         assert(null === err);
-         assert(null !== game);
-         game = game;     
-         assert(game.squares.length === 64);
-        
-      }); 
-   });
-  it("should make a move on our new game ", function (){
-    var move = {};
-  });
+describe("create a new game" , function () {
+  it("should create a new valid game ", function (){
+    gameMan().createGame({players:plyers},function (err, newgame) {
+      assert(err === null);
+      assert(newgame !== null);
+      game = newgame;
+    });
+  });  
 });
 
-describe("game should not start", function () {
-  it("should fail to start a game", function (){
-    var players = {};
-    gameMan().startGame(players,function(err,game){
-      assert(null !== err);
-      assert(null === game);
-    });
+
+describe("make move on new game", function () {
+  it("should make a valid move", function (){
+     gameMan().processMove(game.gameid,{startpos:{x:1,y:1},endpos:{x:2,y:2}}, function (err,suc){
+       gameMan().queryBoard(game.gameid,"2-2", function (err, sq){         
+          assert(true === sq.occupied());
+       });
+       assert(null === err);
+       assert("ok" === suc);
+     });
   });
 });
