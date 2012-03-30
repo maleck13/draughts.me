@@ -6,8 +6,8 @@
  * To change this template use File | Settings | File Templates.
  */
 var assert = require('assert');
-var piece = require('../server/models/piece.js');
-var king = require('../server/models/king.js');
+var piece = require('../models/piece.js');
+var king = require('../models/king.js');
 
 describe("normal piece creation", function () {
    it("should create a normal piece with type man", function () {

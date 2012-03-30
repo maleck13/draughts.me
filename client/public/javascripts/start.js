@@ -15,6 +15,11 @@ $(document).ready(
             }
         }
         
+       $('a#start').click(function (){
+          console.log("game start");
+          socket.emit("startgame",{game:gameid,player:player});
+          return false;
+       }) 
     }
 );
 

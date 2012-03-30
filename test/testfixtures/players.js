@@ -5,7 +5,7 @@
  * Time: 19:52
  * To change this template use File | Settings | File Templates.
  */
-var Player = require('../../server/models/player.js');
+var Player = require('../../models/player.js');
 var events = require('events');
 var util = require('util');
 
