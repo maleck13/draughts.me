@@ -23,6 +23,8 @@ function Game(board,players,opts) {
   this.id       = gameUtil.createUID();
   this.created  = new Date().getTime() / 1000;
   this.created  = this.created.toFixed(0);
+  this.turn     = 0;
+  this.activeplayer = "red";  
   this.addListener('error', function (err){
     if(this.players[0] && this.players[0].notify)this.players[0].notify({name:"error",data:err});
     if(this.players[1] && this.players[1].notify)this.players[1].notify({name:"error",data:err});
@@ -56,7 +58,7 @@ Game.prototype.getBoardSquare = function (sqId) {
   var currentSq;
   for(var i = 0; i < len; i++){
     currentSq = this.board.squares[i];
-    if(currentSq && currentSq.id === sqId) return currentSq;
+    if(currentSq && currentSq.id() === sqId) return currentSq;
   }
   return undefined;
 };
@@ -96,6 +98,32 @@ Game.prototype.end = function () {
   
 Game.prototype.processMove = function (move) {
   console.log("processing move" , move);
+  if(gameUtil.validateMove(move)){
+    var fromId = move.startpos.x + "-" + move.startpos.y;
+    var sq  = this.getBoardSquare(fromId);
+    if(sq){
+      for(var i = 0; i < sq.neighbours().length; i++){
+        var neighbour = sq.neighbours()[i];
+        if(neighbour.x === move.endpos.x && neighbour.y === move.endpos.y){
+          var moveto = this.getBoardSquare(neighbour.x + "-" + neighbour.y);
+          if(! moveto) this.emit('error',"no move to square found");
+          moveto.piece = sq.piece;
+          console.log("moving piece " + sq.piece + " from "+ move.startpos.x + "-" + move.startpos.y + " to "+ move.endpos.x + "-" + move.endpos.y);
+          sq.piece = undefined;
+          this.emit("completed", move);
+          this.activeplayer = (this.activeplayer == "red") ? "black" : "red";
+          return;
+        }
+      }
+      if(move.takes && move.takes.length > 0){
+        console.log("processing takes");
+      }else this.emit('error',"illigal move " + move);
+      // no neighbour found need to chck the takes array process each take is valid
+      // also need to check if a take was avaible,cos that piece needs to be removed.
+      // maybe after each move an array of all possible moves should be made?
+    }else this.emit("error", "invalid move");
+    
+  }else this.emit("error","invalid move");
 };
 
 Game.prototype.getPlayers = function () {
@@ -121,7 +149,11 @@ Game.prototype.removePlayer = function (player){
     }
   }
 };
+
+Game.prototype.pieceCanBeTaken = function (piece){
   
+};
+
 Game.prototype.events = {
     GAME_ENDED:"gameended",
     GAME_START:"gamestarted"

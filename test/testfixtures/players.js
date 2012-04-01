@@ -11,16 +11,24 @@ var util = require('util');
 
 function Socket(){
    events.EventEmitter.call(this); 
+   return (this);
 }
-util.inherits(Socket,events.EventEmitter);
+Socket.prototype = Object.create(events.EventEmitter.prototype);
 
 exports.getPlayers = function (){
     
    var players = [];
   var ply;
   var sock = new Socket();
+  sock.on('error', function (err){
+    console.log("an error was emmitted to the player");
+    console.log(err);
+  });
   for(var i =0; i < 2; i++){
       ply = new Player({playername:"player"+i,socket:sock,side:(i % 2 === 0)?'red':'black'});
+      ply.on('error', function (err){
+        
+      });
       players.push(ply);
   }
   return players;  
