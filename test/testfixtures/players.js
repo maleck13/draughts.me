@@ -8,6 +8,7 @@
 var Player = require('../../models/player.js');
 var events = require('events');
 var util = require('util');
+var playerManager = require('../../lib/playermanager.js');
 
 function Socket(){
    events.EventEmitter.call(this); 
@@ -26,6 +27,9 @@ exports.getPlayers = function (){
   });
   for(var i =0; i < 2; i++){
       ply = new Player({playername:"player"+i,socket:sock,side:(i % 2 === 0)?'red':'black'});
+      playerManager.playermanager.addPlayer({playername:"player"+i,socket:sock,side:(i % 2 === 0)?'red':'black'}, function (err,ok){
+        
+      });
       ply.on('error', function (err){
         
       });

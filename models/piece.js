@@ -5,6 +5,7 @@ function Piece (opts) {
     this.side = opts.side;
     this.id   = gameUtil.createUID();
     this.position   = opts.position;
+    this.rank   = 1;
 }; 
 
 Piece.prototype.Take = function (cb) {
@@ -12,7 +13,7 @@ Piece.prototype.Take = function (cb) {
 };
 
 Piece.prototype.setPosition = function (sqpos){
-  this.position = sq;
+  this.position = sqpos;
 };
 Piece.prototype.toString = function () {
   return this.type + " "+ this.side;  

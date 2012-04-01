@@ -24,7 +24,9 @@ function Game(board,players,opts) {
   this.created  = new Date().getTime() / 1000;
   this.created  = this.created.toFixed(0);
   this.turn     = 0;
-  this.activeplayer = "red";  
+  this.activeplayer = "red";
+  this.started = false;
+  
   this.addListener('error', function (err){
     if(this.players[0] && this.players[0].notify)this.players[0].notify({name:"error",data:err});
     if(this.players[1] && this.players[1].notify)this.players[1].notify({name:"error",data:err});
@@ -41,6 +43,7 @@ function Game(board,players,opts) {
     if(this.players[1] && this.players[1].notify) this.players[1].notify({name:"gameended",data:info});
   });
   
+  this.removedPieces = [];
 }
 
 Game.prototype = Object.create(events.EventEmitter.prototype);
@@ -67,15 +70,28 @@ Game.prototype.getId = function () {
   return this.id;
 };
 
-Game.prototype.start = function (){
+Game.prototype.getPlayer = function(name){
+  if(this.players && this.players.length > 0){
+    for(var i =0; i < this.players.length; i++){
+      if(this.players[i].playerName === name){
+        return this.players[i];
+      }
+    }
+  }
+};
+
+Game.prototype.start = function (playername){
   //check game ready to start
-  console.log("starting game " + this.players.length);
+  if(this.started) return;
+  this.getPlayer(playername).ready = true;
+  console.log("starting game " + this.players.length, this.players);
   if(this.players && this.players.length === 2){
     console.log("there are two players");
     if(this.players[0].ready && this.players[1].ready){
       console.log("both players are ready ");
       this.started = new Date().getTime().toFixed(0) / 1000;
       this.emit(this.events.GAME_START,{id:this.id});
+      this.started = true;
       return;
     }
     else this.emit("error",{id:this.id,msg:"players not ready"});
@@ -97,6 +113,11 @@ Game.prototype.end = function () {
 
   
 Game.prototype.processMove = function (move) {
+  if(! this.started){
+    this.emit('error', "game has not started yet");
+    return;
+  }
+  var that = this;
   console.log("processing move" , move);
   if(gameUtil.validateMove(move)){
     var fromId = move.startpos.x + "-" + move.startpos.y;
@@ -117,6 +138,21 @@ Game.prototype.processMove = function (move) {
       }
       if(move.takes && move.takes.length > 0){
         console.log("processing takes");
+        move.takes.forEach(function (sqloc,ind) {
+          var jumpedsq = that.getBoardSquare(sqloc.x + "-" + sqloc.y);
+          if(jumpedsq.occupied() && jumpedsq.piece.side !== sq.piece.side && jumpedsq.piece.rank <= sq.piece.rank){
+            console.log("PIECE TAKEN !!", jumpedsq.piece); 
+            that.removedPieces.push(jumpedsq.piece);
+            console.log("removed pieces ", that.removedPieces);
+             jumpedsq.piece = undefined;
+             var landing = that.getBoardSquare(move.endpos.x + "-" + move.endpos.y);
+             if(landing && landing.occupied() === false){
+               landing.piece = sq.piece;
+               sq.piece = undefined;
+               that.emit('completed',move);
+             }else that.emit('error',"illigal move"); 
+          }
+        });
       }else this.emit('error',"illigal move " + move);
       // no neighbour found need to chck the takes array process each take is valid
       // also need to check if a take was avaible,cos that piece needs to be removed.

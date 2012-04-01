@@ -15,6 +15,6 @@ module.exports = [
 
   {startpos:{x:2,y:5},takes:[],endpos:{x:1,y:4}},
   
-  //{startpos:{x:2,y:3},takes:[{x:1,y:4}],endpos:{x:0,y:5}}
+  {startpos:{x:2,y:3},takes:[{x:1,y:4}],endpos:{x:0,y:5}}
   
 ];
