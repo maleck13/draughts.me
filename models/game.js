@@ -78,6 +78,7 @@ Game.prototype.getPlayer = function(name){
       }
     }
   }
+  return;
 };
 
 Game.prototype.start = function (playername){
