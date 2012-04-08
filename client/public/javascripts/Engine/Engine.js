@@ -65,6 +65,9 @@
             , Engine.canvas.width
             , Engine.canvas.height
         );
+        Engine.objects.sort(function(a, b){
+           return a.position.getZ() - b.position.getZ();
+        });
         for(id in Engine.objects)
         {
             var object = Engine.objects[id];
