@@ -33,27 +33,30 @@ var square = function (opts) {
           var y = self.position.y;
           if(edgeinfo.isCorner){
               //corner will always be 0,7 or 7,7 7,0 0,0
-              if(self.position.x === 7 && self.position.y === 7) return [{x:7,y:7},{x:7,y:7},{x:7,y:7}];
-              else if(self.position.x === 0 && self.position.y === 0) return [{x:0,y:1},{y:0,x:1},{x:1,y:1}];
-              else if(self.position.x === 7 && self.position.y === 0)return [{x:7,y:1},{x:7,y:7},{y:1,x:7}];
-              else if(self.position.x === 0 && self.position.y === 7)return [{y:7,x:1},{y:7,x:7},{x:1,y:7}];
+              // only diagonals are legal moves
+              if(self.position.x === 7 && self.position.y === 7) return [{x:7,y:7},{x:6,y:6,legal:true},{x:7,y:7}];
+              else if(self.position.x === 0 && self.position.y === 0) return [{x:0,y:1},{y:0,x:1},{x:1,y:1,legal:true}];
+              else if(self.position.x === 7 && self.position.y === 0)return [{x:7,y:1},{x:6,y:1,legal:true},{y:1,x:7}];
+              else if(self.position.x === 0 && self.position.y === 7)return [{y:7,x:1},{y:6,x:2,legal:true},{x:1,y:7}];
           }else if(self.edge().isEdge && ! edgeinfo.isCorner){
               // alway be plus one minus one on the edge axis
               // and plus one plus one minus one plus one plus one on non edge axis
-              if(self.position.x === 7) return [{x:x,y:y -1},{x:x,y:y+1},{x:x-1,y:y},{x:x-1,y:y-1},{x:x-1,y:y+1}];
-              else if(self.position.x === 0) return [{x:x,y:y-1},{x:x,y:y+1},{x:x+1,y:y},{x:x+1,y:y-1},{x:x+1,y:y+1}];
-              else if(self.position.y === 7) return [{y:y,x:x-1},{y:y,x:x+1},{y:y-1,x:x},{y:y-1,x:x-1},{y:y-1,x:x+1}];
-              else if(self.position.y === 0) return [{y:y,x:x-1},{y:y,x:x+1},{y:y+1,x:x},{y:y+1,x:x-1},{y:y+1,x:x+1}];
+              // always 2 legal diaganal moves
+              if(self.position.x === 7) return [{x:x,y:y -1},{x:x,y:y+1},{x:x-1,y:y},{x:x-1,y:y-1, legal:true},{x:x-1,y:y+1,legal:true}];
+              else if(self.position.x === 0) return [{x:x,y:y-1},{x:x,y:y+1},{x:x+1,y:y},{x:x+1,y:y-1, legal:true},{x:x+1,y:y+1,legal:true}];
+              else if(self.position.y === 7) return [{y:y,x:x-1},{y:y,x:x+1},{y:y-1,x:x},{y:y-1,x:x-1,legal:true},{y:y-1,x:x+1,legal:true}];
+              else if(self.position.y === 0) return [{y:y,x:x-1},{y:y,x:x+1},{y:y+1,x:x},{y:y+1,x:x-1,legal:true},{y:y+1,x:x+1,legal:true}];
               //x,y -1, x,y+1,  x -1, y -1 , x-1,y ,x-1 y+1
           }else{
+              //always 4 legal diaganol moves
               return [{x:x+1,y:y},
                       {x:x-1,y:y}, 
                       {y:y -1,x:x},
                       {y:y+1,x:x},
-                      {y:y-1,x:x-1},
-                      {y:y+1,x:x+1},
-                      {x:x-1,y:y+1},
-                      {x:x+1,y:y-1}];
+                      {y:y-1,x:x-1, legal:true},
+                      {y:y+1,x:x+1, legal:true},
+                      {x:x-1,y:y+1,legal:true},
+                      {x:x+1,y:y-1,legal:true}];
           }
            
       },

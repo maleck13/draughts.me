@@ -25,7 +25,7 @@ exports.getPlayers = function (){
     console.log("an error was emmitted to the player");
     console.log(err);
   });
-  for(var i =0; i < 2; i++){
+  for(var i =0; i < 4; i++){
       ply = new Player({playername:"player"+i,socket:sock,side:(i % 2 === 0)?'red':'black'});
       playerManager.playermanager.addPlayer({playername:"player"+i,socket:sock,side:(i % 2 === 0)?'red':'black'}, function (err,ok){
         

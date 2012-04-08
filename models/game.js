@@ -83,7 +83,14 @@ Game.prototype.getPlayer = function(name){
 Game.prototype.start = function (playername){
   //check game ready to start
   if(this.started) return;
-  this.getPlayer(playername).ready = true;
+  var player = this.getPlayer(playername);
+  if(!player){
+    console.log(this.players);
+    this.emit('error',"no player found "+ playername,500);
+    return;
+  }
+    
+  player.ready = true;
   console.log("starting game " + this.players.length, this.players);
   if(this.players && this.players.length === 2){
     console.log("there are two players");
@@ -125,7 +132,12 @@ Game.prototype.processMove = function (move) {
     if(sq){
       for(var i = 0; i < sq.neighbours().length; i++){
         var neighbour = sq.neighbours()[i];
-        if(neighbour.x === move.endpos.x && neighbour.y === move.endpos.y){
+        if(neighbour.x === move.endpos.x && neighbour.y === move.endpos.y ){
+          if(!neighbour.legal){
+            this.emit('error',"Illegal Move, Is Neighbour but not diagonal", move);
+            return;
+          }
+          
           var moveto = this.getBoardSquare(neighbour.x + "-" + neighbour.y);
           if(! moveto) this.emit('error',"no move to square found");
           moveto.piece = sq.piece;

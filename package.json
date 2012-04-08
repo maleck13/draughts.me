@@ -6,6 +6,8 @@
     , "jade": ">= 0.0.1"
     , "socket.io":"*"
     , "underscore":"*"
+    , "redis":"*"
+    , "hiredis":"*"
   }
   ,"devDependencies": {
         "mocha": "0.3.x"
