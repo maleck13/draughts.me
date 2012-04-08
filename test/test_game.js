@@ -1,30 +1,48 @@
-var gameMan = require('../server/lib/gamemanager.js');
+var gameMan = require('../lib/gamemanager.js');
 var assert = require('assert');
 var players = require('./testfixtures/players.js');
 var plyers = players.getPlayers();
 var game;
-
-describe("start game ok ", function (){
-   it("should start a game with two players ", function () {
-         gameMan().startGame({players:plyers}, function (err, game){
-         assert(null === err);
-         assert(null !== game);
-         game = game;     
-         assert(game.squares.length === 64);
-        
-      }); 
-   });
-  it("should make a move on our new game ", function (){
-    var move = {};
-  });
-});
-
-describe("game should not start", function () {
-  it("should fail to start a game", function (){
-    var players = {};
-    gameMan().startGame(players,function(err,game){
-      assert(null !== err);
-      assert(null === game);
+var moves = require('./testfixtures/moves.js');
+var context = 0;
+describe("create a new game" , function () {
+  it("should create a new valid game ", function (){
+    gameMan().createGame({players:plyers},function (err, newgame) {
+      assert(err === null);
+      console.log("got game", newgame.id);
+      assert(newgame !== null);
+      game = newgame;
     });
   });
+  
+ it("should make a move on the new game", function (){
+   game.on('error', function (err){
+     console.log(err);
+   });
+   gameMan().startGame(game.getId(), plyers[0].playerName, function (err, data) {
+     assert(err === null);
+     gameMan().startGame(game.getId(),plyers[1].playerName, function (err, data){
+       assert(err === null);
+       console.log("GAME STARTED ------------------------------\n");
+       
+       for(var i = 0; i < moves.length; i++){
+         game.processMove(moves[i]);
+         var sq = game.getBoardSquare(moves[i].endpos.x + "-" + moves[i].endpos.y);
+         assert(sq);
+         assert(sq.piece !== undefined);
+         var oldsq = game.getBoardSquare(moves[i].startpos.x + "-" + moves[i].startpos.y);
+         assert(oldsq);
+         assert(oldsq.piece === undefined);
+       }
+       
+       console.log("--<<<<<<<<<<<  GAME ENDED >>>>>>>>>>>------ DEAD PIECES >>>>>>> ", game.removedPieces , "\n\n");
+     });
+   });
+   
+   
+ }); 
 });
+
+
+
+

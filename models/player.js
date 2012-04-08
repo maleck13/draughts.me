@@ -8,6 +8,8 @@ function Player (opts) {
     console.log("made new player");
     this.playerName = opts.playername;
     this.connection = opts.socket;
+    this.id         = this.connection.id;
+    this.ready      = false;
 
     events.EventEmitter.call(this);
     

@@ -11,20 +11,20 @@ var express = require('express')
    
 
 
-process.PATH =  process.PATH + ":./models";
+process.PATH =  process.PATH + ":./models:./lib";
 
 var app = module.exports = express.createServer();
 //socketserver.startSocketServer(app);
 // Configuration
 app.configure(function(){
     
-  app.set('views', '../client/views');
+  app.set('views', './client/views');
   app.set('view engine', 'jade');
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
 
-  app.use(express.static('../client/public'));
+  app.use(express.static('./client/public'));
 
 });
 
@@ -42,23 +42,12 @@ app.get('/', routes.index);
 
 
 //set up multiple processes
-if(cluster.isMaster){
-    for(var i=0; i<2; i++){
-       var worker = cluster.fork();
-        worker.on('message',function (msg) {
-           console.log(msg); 
-        });
-    }
-  
-    //start sockets
-   // socketserver.startSocketServer(app);
-//console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-}else{
-    //start sockets
 
+    //start sockets
+    var sockerServer = require('./lib/socketserver.js').startSocketServer(app);
     app.listen(8006);
     
 //console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-}
+
 
 
