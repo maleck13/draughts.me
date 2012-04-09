@@ -19,12 +19,16 @@ socket.on('gameid',function (data){
 
 socket.on('gamestarted', function (data){
   console.log("recieved game started ");
-  socket.emit("makemove",{game:gameid,move:{startpos:{x:1,y:1},endpos:{x:2,y:2}}});
+  socket.emit("makemove",{game:gameid,move:{startpos:{x:1,y:1},takes:[],endpos:{x:2,y:2}}});
 });
 
 socket.on('error', function (data){
   console.log("error "+ data);
   
+});
+
+socket.on('waiting', function (data) {
+  console.log("waiting " + data);
 });
 
 $('document').ready(function () {
