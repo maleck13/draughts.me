@@ -26,3 +26,9 @@ socket.on('error', function (data){
   console.log("error "+ data);
   
 });
+
+$('document').ready(function () {
+  $('#start').click(function () {
+    socket.emit("startgame",{player:player,game:gameid});
+  });
+});

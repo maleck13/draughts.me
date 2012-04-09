@@ -92,6 +92,7 @@ Game.prototype.start = function (playername){
   }
     
   player.ready = true;
+
   console.log("starting game " + this.players.length, this.players);
   if(this.players && this.players.length === 2){
     console.log("there are two players");
@@ -185,6 +186,7 @@ Game.prototype.addPlayer = function(player){
     player.activegame = this.getId();
     this.players.push(player);
   }
+  if(this.players.length === 2) this.emit(this.events.GAME_READY,this.id);
   else this.emit("error","no more players can be added to game " + this.id);
 };
 
@@ -205,7 +207,8 @@ Game.prototype.pieceCanBeTaken = function (piece){
 
 Game.prototype.events = {
     GAME_ENDED:"gameended",
-    GAME_START:"gamestarted"
+    GAME_START:"gamestarted",
+    GAME_READY: "gameready"
 };
 
 module.exports = Game;
